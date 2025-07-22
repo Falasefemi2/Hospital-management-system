@@ -1,24 +1,26 @@
 package com.femi.hospitalmanagementsystem.auth;
 
+import com.femi.hospitalmanagementsystem.model.RefreshToken;
 import com.femi.hospitalmanagementsystem.model.User;
+import com.femi.hospitalmanagementsystem.repository.RefreshTokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.function.Function;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class JwtUtil {
 
     @Value("${jwt.secret}")
@@ -26,6 +28,8 @@ public class JwtUtil {
 
     @Value("${jwt.expiration}")
     private Long expiration;
+
+    private final RefreshTokenRepository refreshTokenRepository;
 
     private SecretKey getSigningKey() {
         byte[] keyBytes = Base64.getDecoder().decode(secret);
@@ -44,6 +48,23 @@ public class JwtUtil {
                 .expiration(new Date(System.currentTimeMillis() + expiration * 1000))
                 .signWith(getSigningKey(), Jwts.SIG.HS256)
                 .compact();
+    }
+
+    public String generateRefreshToken(User user) {
+        String token = UUID.randomUUID().toString();
+        RefreshToken refreshToken = new RefreshToken(
+                token,
+                user,
+                LocalDateTime.now().plusDays(7)
+        );
+        refreshTokenRepository.save(refreshToken);
+        return token;
+    }
+
+    public boolean isRefreshTokenValid(String token, User user) {
+        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByToken(token);
+        return refreshToken.isPresent() && refreshToken.get().getUser().getId().equals(user.getId())
+                && refreshToken.get().getExpiryDate().isAfter(LocalDateTime.now());
     }
 
     public String extractUserId(String token) {

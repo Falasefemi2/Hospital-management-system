@@ -105,10 +105,12 @@ public class UserService {
                     .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
             String token = jwtUtil.generateToken(user);
+            String refreshToken = jwtUtil.generateRefreshToken(user);
             log.info("User logged in successfully: {}", user.getEmail());
 
             return UserResponseDTO.builder()
                     .token(token)
+                    .refreshToken(refreshToken)
                     .id(user.getId())
                     .name(user.getName())
                     .email(user.getEmail())

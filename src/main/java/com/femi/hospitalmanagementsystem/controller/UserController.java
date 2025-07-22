@@ -1,6 +1,9 @@
 package com.femi.hospitalmanagementsystem.controller;
 
+import com.femi.hospitalmanagementsystem.auth.JwtUtil;
 import com.femi.hospitalmanagementsystem.dto.*;
+import com.femi.hospitalmanagementsystem.model.User;
+import com.femi.hospitalmanagementsystem.repository.UserRepository;
 import com.femi.hospitalmanagementsystem.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,8 @@ import java.time.LocalDateTime;
 public class UserController {
 
     private final UserService userService;
+    private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<UserDetailsDTO>> registerPatient(
@@ -104,6 +109,29 @@ public class UserController {
             userService.resetPassword(dto.token(), dto.newPassword());
             return ResponseEntity.ok().body(new ErrorResponseDTO("Password reset successful"));
         } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new ErrorResponseDTO(e.getMessage()));
+        }
+    }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<?> refreshToken(@RequestBody @Valid RefreshTokenDTO dto) {
+        try {
+            User user = userRepository.findByEmail(jwtUtil.extractUsername(dto.accessToken()))
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid access token"));
+            if (jwtUtil.isRefreshTokenValid(dto.refreshToken(), user)) {
+                String newAccessToken = jwtUtil.generateToken(user);
+                return ResponseEntity.ok().body(UserResponseDTO.builder()
+                        .token(newAccessToken)
+                        .refreshToken(dto.refreshToken())
+                        .id(user.getId())
+                        .name(user.getUsername())
+                        .email(user.getEmail())
+                        .role(user.getRole())
+                        .build());
+            } else {
+                return ResponseEntity.badRequest().body(new ErrorResponseDTO("Invalid or expired refresh token"));
+            }
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorResponseDTO(e.getMessage()));
         }
     }
