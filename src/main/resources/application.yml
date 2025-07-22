@@ -1,1 +1,28 @@
-spring.application.name=Hospital-management-system
+spring:
+  application:
+    name: Hospital-management-system
+  profiles:
+    include: local
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/hospital_db?createDatabaseIfNotExist=true
+    username: root
+    password: admin
+    hikari:
+      maximum-pool-size: 10
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+jwt:
+  secret: 9uGYcAZZA+yCk3UOrgZsXuoadbla5m4PNgobWwfwh3BCw7qsFrpWqrIBBOdhFMF4aBTLM6G03Y7DJ9UoJAZpqg==
+  expiration: 3600000
+
+server:
+  port: 8080
