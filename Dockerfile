@@ -1,19 +1,22 @@
-# Use a specific Java version as a base image
-FROM eclipse-temurin:21-jdk-jammy
+# Stage 1: Build the app with Maven
+FROM maven:3.9.6-eclipse-temurin-21 as builder
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Argument to hold the name of the JAR file
-#ARG JAR_FILE=target/*.jar
+# Copy all files
+COPY . .
 
-# Copy the JAR file from the build context to the container
-#COPY ${JAR_FILE} application.
-COPY target/Hospital-management-system-0.0.1-SNAPSHOT.jar application.jar
+# Package the app
+RUN ./mvnw clean package -DskipTests
 
+# Stage 2: Run the app
+FROM eclipse-temurin:21-jdk-jammy
 
-# Expose the port the application runs on
+WORKDIR /app
+
+# Copy only the built JAR from the first stage
+COPY --from=builder /app/target/*.jar app.jar
+
 EXPOSE 8080
 
-# Command to run the application
-ENTRYPOINT ["java", "-jar", "application.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -19,3 +19,5 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: admin
       MYSQL_DATABASE: hospital_db
+      JWT_SECRET: 9uGYcAZZA+yCk3UOrgZsXuoadbla5m4PNgobWwfwh3BCw7qsFrpWqrIBBOdhFMF4aBTLM6G03Y7DJ9UoJAZpqg==
+      JWT_EXPIRATION: 3600000
