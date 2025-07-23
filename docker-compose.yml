@@ -8,12 +8,13 @@ services:
     depends_on:
       - mysql
     environment:
-      DB_URL: jdbc:mysql://mysql:3306/hospital_db
+      DB_URL: jdbc:mysql://mysql:3306/hospital_db?autoReconnect=true&useSSL=false
       DB_USERNAME: root
       DB_PASSWORD: admin
       JWT_SECRET: 9uGYcAZZA+yCk3UOrgZsXuoadbla5m4PNgobWwfwh3BCw7qsFrpWqrIBBOdhFMF4aBTLM6G03Y7DJ9UoJAZpqg==
       JWT_EXPIRATION: 3600000
       PORT: 8080
+    command: ["./wait-for-it.sh", "mysql:3306", "--", "java", "-jar", "/app.jar"]
 
   mysql:
     image: mysql:8
