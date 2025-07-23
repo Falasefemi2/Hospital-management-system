@@ -61,10 +61,15 @@ The application will be available at `http://localhost:8080`.
 - **POST** `/api/users/login` - Login for all users.
 - **POST** `/api/users/reset-password/request` - Request a password reset link.
 - **POST** `/api/users/reset-password` - Reset password with a valid token.
+- **POST** `/api/users/refresh-token` - Refresh JWT token.
 
 ### Admin
 
 - **POST** `/api/admin/users` - Create a new user (ADMIN, DOCTOR, or PATIENT).
+
+### Appointments
+
+- **POST** `/api/appointments` - Book an appointment (requires PATIENT role).
 
 ## Configuration
 

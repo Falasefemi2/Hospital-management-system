@@ -32,10 +32,7 @@ public class AdminController implements ApplicationListener<ContextRefreshedEven
     public ResponseEntity<ApiResponse<UserDetailsDTO>> createUser(
             @Valid @RequestBody AdminUserCreationDTO adminUserCreationDTO
             ) {
-        System.out.println("=== CREATEUSER METHOD CALLED ===");
-        log.info("=== CREATEUSER METHOD CALLED ===");
-        log.info("Received user creation request: {}", adminUserCreationDTO);
-        try {
+               try {
             UserDetailsDTO userDetailsDTO = userService.createUser(adminUserCreationDTO);
             ApiResponse<UserDetailsDTO> response = ApiResponse.<UserDetailsDTO>builder()
                     .success(true)

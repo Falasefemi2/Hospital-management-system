@@ -53,7 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         jwt = authHeader.substring(7);
 
         try {
-            userEmail = jwtUtil.extractUsername(jwt); // Now this will be email
+            userEmail = jwtUtil.extractUsername(jwt);
             System.err.println("Extracted email from JWT: " + userEmail);
         } catch (Exception e) {
             log.debug("Invalid JWT token: {}", e.getMessage());
@@ -70,10 +70,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 System.err.println("User found: " + user.getEmail() + ", Role: " + user.getRole());
 
                 if (jwtUtil.isTokenValid(jwt, user)) {
-                    // Extract role from JWT and convert to authority
                     String role = jwtUtil.extractRole(jwt);
                     Collection<GrantedAuthority> authorities = List.of(
-                            new SimpleGrantedAuthority("ROLE_" + role) // Add ROLE_ prefix
+                            new SimpleGrantedAuthority("ROLE_" + role)
                     );
 
                     System.err.println("Setting authorities: " + authorities);
@@ -81,7 +80,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             user,
                             null,
-                            authorities // Use converted authorities
+                            authorities
                     );
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
