@@ -8,9 +8,12 @@ services:
     depends_on:
       - mysql
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/hospital_db
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: admin
+      DB_URL: jdbc:mysql://mysql:3306/hospital_db
+      DB_USERNAME: root
+      DB_PASSWORD: admin
+      JWT_SECRET: 9uGYcAZZA+yCk3UOrgZsXuoadbla5m4PNgobWwfwh3BCw7qsFrpWqrIBBOdhFMF4aBTLM6G03Y7DJ9UoJAZpqg==
+      JWT_EXPIRATION: 3600000
+      PORT: 8080
 
   mysql:
     image: mysql:8
@@ -19,5 +22,3 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: admin
       MYSQL_DATABASE: hospital_db
-      JWT_SECRET: 9uGYcAZZA+yCk3UOrgZsXuoadbla5m4PNgobWwfwh3BCw7qsFrpWqrIBBOdhFMF4aBTLM6G03Y7DJ9UoJAZpqg==
-      JWT_EXPIRATION: 3600000
