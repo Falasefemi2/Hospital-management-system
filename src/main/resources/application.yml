@@ -1,16 +1,18 @@
 spring:
   application:
     name: Hospital-management-system
-  profiles:
-    include: local
+
+  config:
+    import: optional:file:.env[.properties]
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/hospital_db?createDatabaseIfNotExist=true
-    username: root
-    password: admin
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     hikari:
       maximum-pool-size: 10
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -21,8 +23,8 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
 
 jwt:
-  secret: 9uGYcAZZA+yCk3UOrgZsXuoadbla5m4PNgobWwfwh3BCw7qsFrpWqrIBBOdhFMF4aBTLM6G03Y7DJ9UoJAZpqg==
-  expiration: 3600000
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION:3600000}
 
 server:
-  port: 8080
+  port: ${PORT:8080}
